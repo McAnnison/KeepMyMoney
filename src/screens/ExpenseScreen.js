@@ -39,10 +39,16 @@ export default function ExpenseScreen() {
       return;
     }
 
+    const numAmount = parseFloat(amount);
+    if (isNaN(numAmount) || numAmount <= 0) {
+      Alert.alert('Error', 'Please enter a valid positive amount');
+      return;
+    }
+
     // Get AI recommendation
     const recommendation = AIService.getSpendingRecommendations(
       category,
-      parseFloat(amount),
+      numAmount,
       budgets
     );
 
@@ -54,19 +60,19 @@ export default function ExpenseScreen() {
           { text: 'Cancel', style: 'cancel' },
           {
             text: 'Add Anyway',
-            onPress: () => saveExpense()
+            onPress: () => saveExpense(numAmount)
           }
         ]
       );
     } else {
-      await saveExpense();
+      await saveExpense(numAmount);
     }
   };
 
-  const saveExpense = async () => {
+  const saveExpense = async (numAmount) => {
     const newExpense = new Expense(
       generateId(),
-      parseFloat(amount),
+      numAmount,
       description,
       new Date().toISOString(),
       category

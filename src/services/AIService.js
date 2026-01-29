@@ -4,6 +4,11 @@
 export const AIService = {
   // Get personalized saving tips based on user's spending patterns
   getSavingTips(expenses, incomes, budgets) {
+    // Validate inputs
+    if (!Array.isArray(expenses)) expenses = [];
+    if (!Array.isArray(incomes)) incomes = [];
+    if (!Array.isArray(budgets)) budgets = [];
+    
     const tips = [];
     
     // Calculate total income and expenses
@@ -34,37 +39,41 @@ export const AIService = {
     });
     
     // Check for overspending in categories
-    for (const [category, amount] of Object.entries(categorySpending)) {
-      const percentage = totalExpenses > 0 ? (amount / totalExpenses) * 100 : 0;
-      
-      if (category === 'Food' && percentage > 30) {
-        tips.push({
-          title: "Food Spending Alert",
-          description: `Food expenses are ${percentage.toFixed(1)}% of your total spending. Consider meal planning and cooking at home more often.`,
-          priority: "medium"
-        });
-      }
-      
-      if (category === 'Entertainment' && percentage > 20) {
-        tips.push({
-          title: "Entertainment Budget Check",
-          description: `Entertainment is ${percentage.toFixed(1)}% of your spending. Look for free campus events or student discounts.`,
-          priority: "medium"
-        });
+    if (totalExpenses > 0) {
+      for (const [category, amount] of Object.entries(categorySpending)) {
+        const percentage = (amount / totalExpenses) * 100;
+        
+        if (category === 'Food' && percentage > 30) {
+          tips.push({
+            title: "Food Spending Alert",
+            description: `Food expenses are ${percentage.toFixed(1)}% of your total spending. Consider meal planning and cooking at home more often.`,
+            priority: "medium"
+          });
+        }
+        
+        if (category === 'Entertainment' && percentage > 20) {
+          tips.push({
+            title: "Entertainment Budget Check",
+            description: `Entertainment is ${percentage.toFixed(1)}% of your spending. Look for free campus events or student discounts.`,
+            priority: "medium"
+          });
+        }
       }
     }
     
     // Tip 3: Budget adherence
     budgets.forEach(budget => {
-      const spent = categorySpending[budget.category] || 0;
-      const percentage = (spent / budget.threshold) * 100;
-      
-      if (percentage > 90) {
-        tips.push({
-          title: `${budget.category} Budget Alert`,
-          description: `You've used ${percentage.toFixed(1)}% of your ${budget.category} budget. Be mindful of additional expenses.`,
-          priority: "high"
-        });
+      if (budget.threshold > 0) {
+        const spent = categorySpending[budget.category] || 0;
+        const percentage = (spent / budget.threshold) * 100;
+        
+        if (percentage > 90) {
+          tips.push({
+            title: `${budget.category} Budget Alert`,
+            description: `You've used ${percentage.toFixed(1)}% of your ${budget.category} budget. Be mindful of additional expenses.`,
+            priority: "high"
+          });
+        }
       }
     });
     
@@ -88,17 +97,18 @@ export const AIService = {
   
   // Get smart spending recommendations
   getSpendingRecommendations(category, amount, budgets) {
+    if (!Array.isArray(budgets)) budgets = [];
+    
     const budget = budgets.find(b => b.category === category);
     
-    if (!budget) {
+    if (!budget || budget.threshold <= 0) {
       return {
         canSpend: true,
         message: "No budget set for this category. Consider setting one to track spending better."
       };
     }
     
-    // This would need to check current spending for the period
-    // Simplified version here
+    // Check if this expense is large relative to budget
     if (amount > budget.threshold * 0.5) {
       return {
         canSpend: true,

@@ -35,9 +35,15 @@ export default function IncomeScreen() {
       return;
     }
 
+    const numAmount = parseFloat(amount);
+    if (isNaN(numAmount) || numAmount <= 0) {
+      Alert.alert('Error', 'Please enter a valid positive amount');
+      return;
+    }
+
     const newIncome = new Income(
       generateId(),
-      parseFloat(amount),
+      numAmount,
       source,
       new Date().toISOString(),
       category

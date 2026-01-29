@@ -222,13 +222,13 @@ const styles = StyleSheet.create({
   quickActions: {
     flexDirection: 'row',
     paddingHorizontal: 16,
-    gap: 12,
   },
   actionButton: {
     flex: 1,
     padding: 16,
     borderRadius: 12,
     alignItems: 'center',
+    marginHorizontal: 6,
   },
   incomeButton: {
     backgroundColor: '#4CAF50',

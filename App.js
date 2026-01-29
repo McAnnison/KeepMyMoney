@@ -1,4 +1,5 @@
 import React from 'react';
+import { Text } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { StatusBar } from 'expo-status-bar';
@@ -74,8 +75,8 @@ export default function App() {
 // Simple text-based icon component
 function TabIcon({ emoji, color }) {
   return (
-    <span style={{ fontSize: 24, filter: color === '#999' ? 'grayscale(100%)' : 'none' }}>
+    <Text style={{ fontSize: 24, color }}>
       {emoji}
-    </span>
+    </Text>
   );
 }

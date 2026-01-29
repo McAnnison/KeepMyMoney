@@ -37,10 +37,16 @@ export default function BudgetScreen() {
       return;
     }
 
+    const numThreshold = parseFloat(threshold);
+    if (isNaN(numThreshold) || numThreshold <= 0) {
+      Alert.alert('Error', 'Please enter a valid positive amount');
+      return;
+    }
+
     // Check if budget for this category already exists
     const existingIndex = budgets.findIndex(b => b.category === category);
     
-    const newBudget = new Budget(category, parseFloat(threshold), 'monthly');
+    const newBudget = new Budget(category, numThreshold, 'monthly');
     let updatedBudgets;
     
     if (existingIndex >= 0) {
